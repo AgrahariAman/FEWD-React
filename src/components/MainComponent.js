@@ -40,7 +40,7 @@ class Main extends Component {
       return (
         <Dishdetail
           dish={
-            this.state.props.filter(
+            this.props.dishes.filter(
               (dish) => dish.id === parseInt(match.params.dishId, 10)
             )[0]
           }

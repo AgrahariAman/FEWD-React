@@ -14,7 +14,6 @@ import {
   Modal,
   ModalBody,
   ModalHeader,
-  ModalFooter,
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import { LocalForm, Errors, Control } from "react-redux-form";
@@ -37,7 +36,15 @@ class CommentForm extends Component {
       isModalOpen: !this.state.isModalOpen,
     });
   }
-
+  handleSubmit(values) {
+    this.toggleModal();
+    this.props.addComment(
+      this.props.dishId,
+      values.rating,
+      values.author,
+      values.comment
+    );
+  }
   render() {
     return (
       <div>
@@ -48,7 +55,7 @@ class CommentForm extends Component {
         <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
           <ModalHeader>Submit Comment</ModalHeader>
           <ModalBody>
-            <LocalForm onSubmit={(values) => this.handleSubmitChange(values)}>
+            <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
               <Row className="form-group">
                 <Label htmlFor="ratings" md={2}>
                   Ratings
@@ -145,7 +152,7 @@ function RenderDish({ dish }) {
   );
 }
 
-function RenderComments({ comments }) {
+function RenderComments({ comments, addComment, dishId }) {
   if (comments != null) {
     const allComments = comments.map((comment) => {
       return (
@@ -163,12 +170,13 @@ function RenderComments({ comments }) {
         </ul>
       );
     });
-    allComments.push(<CommentForm />);
+    allComments.push(<CommentForm dishId={dishId} addComment={addComment} />);
     return allComments;
   } else {
     return <div></div>;
   }
 }
+
 const Dishdetail = (props) => {
   if (props.dish != null)
     return (
@@ -190,7 +198,11 @@ const Dishdetail = (props) => {
             <RenderDish dish={props.dish} />
           </div>
           <div className="col-12 col-md-5 m-1">
-            <RenderComments comments={props.comments} />
+            <RenderComments
+              comments={props.comments}
+              addComment={props.addComment}
+              dishId={props.dish.id}
+            />
           </div>
         </div>
       </div>
